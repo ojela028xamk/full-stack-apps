@@ -1,0 +1,17 @@
+.todolist {
+    margin: auto;
+    margin-top: 1.5em;
+    padding: 3em;
+    width: 700px;
+    height: 500px;
+    border: 5px solid rgb(128, 128, 128);
+    border-radius: 20px;
+
+    .todolist-items {
+        padding: 1em;
+
+        span {
+            font-size: 1.2em;
+        }
+    }
+}
