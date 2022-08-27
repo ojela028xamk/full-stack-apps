@@ -1,5 +1,6 @@
 import "./App.scss";
 import { Col, Row, Container, Button } from "react-bootstrap";
+import TodoList from "./components/TodoList";
 
 function App() {
   return (
