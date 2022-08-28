@@ -1,15 +1,26 @@
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./TodoList.scss";
+import Axios from "axios";
+import { useState } from "react";
 
 export default function TodoList() {
   const navigate = useNavigate();
+  const [listitem, setListitem] = useState<string>();
 
   const mockdata: string[] = [
     "Buy a new mattress",
     "Look for an apartment",
     "Build a new PC",
   ];
+
+  function addListitem() {
+    Axios.post("http://localhost:3100/create", {
+      listitem: listitem,
+    }).then(() => {
+      console.log("List item added.");
+    });
+  }
 
   return (
     <div className="todolist">
@@ -21,10 +32,15 @@ export default function TodoList() {
         <Container>
           <Row>
             <Col xs={10}>
-              <Form.Control type="text" placeholder="Enter task" />
+              <Form.Control
+                type="text"
+                name="listitem"
+                placeholder="Enter task"
+                onChange={(event) => setListitem(event.target.value)}
+              />
             </Col>
             <Col xs={2}>
-              <Button disabled variant="primary" type="submit">
+              <Button variant="primary" type="submit" onClick={addListitem}>
                 Add +
               </Button>
             </Col>
