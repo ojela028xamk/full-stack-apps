@@ -1,24 +1,39 @@
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import "./TodoList.scss";
 import Axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { TodolistTS } from "../interfaces/TodolistTS";
 
 export default function TodoList() {
   const navigate = useNavigate();
   const [listitem, setListitem] = useState<string>();
+  const [listdata, setListdata] = useState<TodolistTS[]>();
 
-  const mockdata: string[] = [
-    "Buy a new mattress",
-    "Look for an apartment",
-    "Build a new PC",
-  ];
+  // fetch to-do list items from backend
+  useEffect(() => {
+    Axios.get("http://localhost:3100/browse").then((res) => {
+      setListdata(res.data);
+    });
+  }, [listdata]);
+
+  if (!listdata) {
+    return <Spinner animation={"border"} className="m-4" />;
+  }
 
   function addListitem() {
     Axios.post("http://localhost:3100/create", {
       listitem: listitem,
     }).then(() => {
       console.log("List item added.");
+    });
+  }
+
+  function deleteListitem(listitemID: number) {
+    Axios.delete(`http://localhost:3100/delete/${listitemID}`, {
+      params: { id: listitemID },
+    }).then((res) => {
+      console.log(res);
     });
   }
 
@@ -48,14 +63,19 @@ export default function TodoList() {
         </Container>
       </Form>
       <Container className="todolist-items">
-        {mockdata.map((taskitem: string) => (
+        {listdata.map((listitem: TodolistTS) => (
           <Row className="mt-2">
             <Col xs={8}>
-              <span>{taskitem}</span>
+              <span>{listitem.listitem}</span>
             </Col>
             <Col xs={4}>
               <Button variant="warning">Edit</Button>{" "}
-              <Button variant="danger">Delete</Button>
+              <Button
+                variant="danger"
+                onClick={() => deleteListitem(listitem.id)}
+              >
+                Delete
+              </Button>
             </Col>
           </Row>
         ))}
